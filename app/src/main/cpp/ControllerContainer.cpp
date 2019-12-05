@@ -36,12 +36,16 @@ struct ControllerContainer::State {
   bool visible = false;
   vrb::Color pointerColor;
   int gazeIndex = -1;
+  uint64_t immersiveFrameId;
+  uint64_t lastImmersiveFrameId;
 
   void Initialize(vrb::CreationContextPtr& aContext) {
     context = aContext;
     root = Toggle::Create(aContext);
     visible = true;
     pointerColor = vrb::Color(1.0f, 1.0f, 1.0f, 1.0f);
+    immersiveFrameId = 0;
+    lastImmersiveFrameId = 0;
   }
 
   bool Contains(const int32_t aControllerIndex) {
@@ -288,6 +292,24 @@ ControllerContainer::SetVisible(const int32_t aControllerIndex, const bool aVisi
 }
 
 void
+ControllerContainer::SetControllerType(const int32_t aControllerIndex, mozilla::gfx::VRControllerType aType) {
+  if (!m.Contains(aControllerIndex)) {
+    return;
+  }
+  Controller& controller = m.list[aControllerIndex];
+  controller.type = aType;
+}
+
+void
+ControllerContainer::SetTargetRayMode(const int32_t aControllerIndex, mozilla::gfx::TargetRayMode aMode) {
+  if (!m.Contains(aControllerIndex)) {
+    return;
+  }
+  Controller& controller = m.list[aControllerIndex];
+  controller.targetRayMode = aMode;
+}
+
+void
 ControllerContainer::SetTransform(const int32_t aControllerIndex, const vrb::Matrix& aTransform) {
   if (!m.Contains(aControllerIndex)) {
     return;
@@ -400,6 +422,54 @@ ControllerContainer::GetHapticFeedback(const int32_t aControllerIndex, uint64_t 
 }
 
 void
+ControllerContainer::SetSelectActionStart(const int32_t aControllerIndex) {
+  if (!m.Contains(aControllerIndex) || !m.immersiveFrameId) {
+    return;
+  }
+
+  if (m.list[aControllerIndex].selectActionStopFrameId >=
+      m.list[aControllerIndex].selectActionStartFrameId) {
+    m.list[aControllerIndex].selectActionStartFrameId = m.immersiveFrameId;
+  }
+}
+
+void
+ControllerContainer::SetSelectActionStop(const int32_t aControllerIndex) {
+  if (!m.Contains(aControllerIndex) || !m.lastImmersiveFrameId) {
+    return;
+  }
+
+  if (m.list[aControllerIndex].selectActionStartFrameId >
+      m.list[aControllerIndex].selectActionStopFrameId) {
+    m.list[aControllerIndex].selectActionStopFrameId = m.lastImmersiveFrameId;
+  }
+}
+
+void
+ControllerContainer::SetSqueezeActionStart(const int32_t aControllerIndex) {
+  if (!m.Contains(aControllerIndex) || !m.immersiveFrameId) {
+    return;
+  }
+
+  if (m.list[aControllerIndex].squeezeActionStopFrameId >=
+      m.list[aControllerIndex].squeezeActionStartFrameId) {
+    m.list[aControllerIndex].squeezeActionStartFrameId = m.immersiveFrameId;
+  }
+}
+
+void
+ControllerContainer::SetSqueezeActionStop(const int32_t aControllerIndex) {
+  if (!m.Contains(aControllerIndex) || !m.lastImmersiveFrameId) {
+    return;
+  }
+
+  if (m.list[aControllerIndex].squeezeActionStartFrameId >
+      m.list[aControllerIndex].squeezeActionStopFrameId) {
+    m.list[aControllerIndex].squeezeActionStopFrameId = m.lastImmersiveFrameId;
+  }
+}
+
+void
 ControllerContainer::SetLeftHanded(const int32_t aControllerIndex, const bool aLeftHanded) {
   if (!m.Contains(aControllerIndex)) {
     return;
@@ -464,6 +534,16 @@ ControllerContainer::SetVisible(const bool aVisible) {
 
 void ControllerContainer::SetGazeModeIndex(const int32_t aControllerIndex) {
   m.gazeIndex = aControllerIndex;
+}
+
+void
+ControllerContainer::SetFrameId(const uint64_t aFrameId) {
+  if (m.immersiveFrameId) {
+    m.lastImmersiveFrameId = aFrameId ? aFrameId : m.immersiveFrameId;
+  } else {
+    m.lastImmersiveFrameId = 0;
+  }
+  m.immersiveFrameId = aFrameId;
 }
 
 ControllerContainer::ControllerContainer(State& aState, vrb::CreationContextPtr& aContext) : m(aState) {

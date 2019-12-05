@@ -332,6 +332,11 @@ ExternalVR::SetSourceBrowser(VRBrowserType aBrowser) {
   m.SetSourceBrowser(aBrowser);
 }
 
+uint64_t
+ExternalVR::GetFrameId() const {
+  return m.lastFrameId;
+}
+
 void
 ExternalVR::SetCompositorEnabled(bool aEnabled) {
   if (aEnabled == m.compositorEnabled) {
@@ -429,6 +434,7 @@ ExternalVR::PushFramePoses(const vrb::Matrix& aHeadTransform, const std::vector<
     }
     immersiveController.numHaptics = controller.numHaptics;
     immersiveController.hand = controller.leftHanded ? mozilla::gfx::ControllerHand::Left : mozilla::gfx::ControllerHand::Right;
+    immersiveController.type = controller.type;
 
     const uint16_t flags = GetControllerCapabilityFlags(controller.deviceCapabilities);
     immersiveController.flags = static_cast<mozilla::gfx::ControllerCapabilityFlags>(flags);
@@ -446,6 +452,14 @@ ExternalVR::PushFramePoses(const vrb::Matrix& aHeadTransform, const std::vector<
       vrb::Vector position(controller.transformMatrix.GetTranslation());
       memcpy(&(immersiveController.pose.position), position.Data(), sizeof(immersiveController.pose.position));
     }
+    memcpy(&(immersiveController.gripPose), &(immersiveController.pose), sizeof(immersiveController.gripPose));
+
+    immersiveController.targetRayMode = controller.targetRayMode;
+    immersiveController.mappingType = mozilla::gfx::GamepadMappingType::XRStandard;
+    immersiveController.selectActionStartFrameId = controller.selectActionStartFrameId;
+    immersiveController.selectActionStopFrameId = controller.selectActionStopFrameId;
+    immersiveController.squeezeActionStartFrameId = controller.squeezeActionStartFrameId;
+    immersiveController.squeezeActionStopFrameId = controller.squeezeActionStopFrameId;
   }
 
   m.system.sensorState.timestamp = aTimestamp;

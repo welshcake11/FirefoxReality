@@ -65,6 +65,13 @@ Controller::operator=(const Controller& aController) {
   leftHanded = aController.leftHanded;
   inDeadZone = aController.inDeadZone;
   lastHoverEvent = aController.lastHoverEvent;
+  profile = aController.profile;
+  type = aController.type;
+  targetRayMode = aController.targetRayMode;
+  selectActionStartFrameId = aController.selectActionStartFrameId;
+  selectActionStartFrameId = aController.selectActionStopFrameId;
+  squeezeActionStartFrameId = aController.squeezeActionStartFrameId;
+  squeezeActionStopFrameId = aController.squeezeActionStopFrameId;
   return *this;
 }
 
@@ -102,6 +109,12 @@ Controller::Reset() {
   leftHanded = false;
   inDeadZone = true;
   lastHoverEvent = 0.0;
+  type = mozilla::gfx::VRControllerType::_empty;
+  targetRayMode = mozilla::gfx::TargetRayMode ::TrackedPointer;
+  selectActionStartFrameId = 0;
+  selectActionStopFrameId = 0;
+  squeezeActionStartFrameId = 0;
+  squeezeActionStopFrameId = 0;
 }
 
 vrb::Vector Controller::StartPoint() const {

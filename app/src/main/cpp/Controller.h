@@ -10,13 +10,14 @@
 #include "Device.h"
 #include "vrb/Forward.h"
 #include "vrb/Matrix.h"
+#include "moz_external_vr.h"
 
 namespace crow {
 
 class Pointer;
 typedef std::shared_ptr<Pointer> PointerPtr;
 
-static const int kControllerMaxButtonCount = 6;
+static const int kControllerMaxButtonCount = 7;
 static const int kControllerMaxAxes = 6;
 
 struct Controller {
@@ -52,6 +53,8 @@ struct Controller {
   float immersiveAxes[kControllerMaxAxes];
   uint32_t numAxes;
   uint32_t numHaptics;
+  mozilla::gfx::VRControllerType type;
+  mozilla::gfx::TargetRayMode targetRayMode;
   float inputFrameID;
   float pulseDuration;
   float pulseIntensity;
@@ -60,6 +63,12 @@ struct Controller {
   bool inDeadZone;
   double lastHoverEvent;
   device::CapabilityFlags deviceCapabilities;
+
+  std::string profile;
+  uint64_t selectActionStartFrameId;
+  uint64_t selectActionStopFrameId;
+  uint64_t squeezeActionStartFrameId;
+  uint64_t squeezeActionStopFrameId;
 
   vrb::Vector StartPoint() const;
   vrb::Vector Direction() const;

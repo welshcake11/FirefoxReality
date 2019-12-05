@@ -10,8 +10,10 @@
 #include "vrb/Forward.h"
 #include "Device.h"
 #include "GestureDelegate.h"
+#include "moz_external_vr.h"
 
 #include <memory>
+#include <string>
 
 namespace crow {
 
@@ -39,6 +41,8 @@ public:
   virtual void SetCapabilityFlags(const int32_t aControllerIndex, const device::CapabilityFlags aFlags) = 0;
   virtual void SetEnabled(const int32_t aControllerIndex, const bool aEnabled) = 0;
   virtual void SetVisible(const int32_t aControllerIndex, const bool aVisible) = 0;
+  virtual void SetControllerType(const int32_t aControllerIndex, mozilla::gfx::VRControllerType aType) = 0;
+  virtual void SetTargetRayMode(const int32_t aControllerIndex, mozilla::gfx::TargetRayMode aMode) = 0;
   virtual void SetTransform(const int32_t aControllerIndex, const vrb::Matrix& aTransform) = 0;
   virtual void SetButtonCount(const int32_t aControllerIndex, const uint32_t aNumButtons) = 0;
   virtual void SetButtonState(const int32_t aControllerIndex, const Button aWhichButton, const int32_t aImmersiveIndex, const bool aPressed, const bool aTouched, const float aImmersiveTrigger = -1.0f) = 0;
@@ -47,6 +51,10 @@ public:
   virtual uint32_t GetHapticCount(const int32_t aControllerIndex) = 0;
   virtual void SetHapticFeedback(const int32_t aControllerIndex, const uint64_t aInputFrameID, const float aPulseDuration, const float aPulseIntensity) = 0;
   virtual void GetHapticFeedback(const int32_t aControllerIndex, uint64_t & aInputFrameID, float& aPulseDuration, float& aPulseIntensity) = 0;
+  virtual void SetSelectActionStart(const int32_t aControllerIndex) = 0;
+  virtual void SetSelectActionStop(const int32_t aControllerIndex) = 0;
+  virtual void SetSqueezeActionStart(const int32_t aControllerIndex) = 0;
+  virtual void SetSqueezeActionStop(const int32_t aControllerIndex) = 0;
   virtual void SetLeftHanded(const int32_t aControllerIndex, const bool aLeftHanded) = 0;
   virtual void SetTouchPosition(const int32_t aControllerIndex, const float aTouchX, const float aTouchY) = 0;
   virtual void EndTouch(const int32_t aControllerIndex) = 0;

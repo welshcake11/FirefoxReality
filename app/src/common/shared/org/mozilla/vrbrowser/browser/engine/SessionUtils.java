@@ -31,6 +31,8 @@ class SessionUtils {
         try (FileOutputStream out = new FileOutputStream(prefFileName)) {
             out.write("pref(\"dom.vr.enabled\", true);\n".getBytes());
             out.write("pref(\"dom.vr.external.enabled\", true);\n".getBytes());
+            // TODO: Unmark `dom.vr.webxr.enabled` when Bug 1614496 is landed.
+            //out.write("pref(\"dom.vr.webxr.enabled\", true);\n".getBytes());
             out.write("pref(\"webgl.enable-surface-texture\", true);\n".getBytes());
             // Enable MultiView draft extension
             out.write("pref(\"webgl.enable-draft-extensions\", true);\n".getBytes());
