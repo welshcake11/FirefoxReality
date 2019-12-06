@@ -236,6 +236,9 @@ struct DeviceDelegateWaveVR::State {
     delegate->CreateController(aController.index, aController.is6DoF ? 1 : 0, aController.is6DoF ? "HTC Vive Focus Plus Controller" : "HTC Vive Focus Controller", transform);
     delegate->SetLeftHanded(aController.index, aController.hand == ElbowModel::HandEnum::Left);
     delegate->SetHapticCount(aController.index, 1);
+    delegate->SetControllerType(aController.index, aController.is6DoF ? mozilla::gfx::VRControllerType::HTCViveFocusPlus :
+                               mozilla::gfx::VRControllerType::HTCViveFocus);
+    delegate->SetTargetRayMode(aController.index, mozilla::gfx::TargetRayMode::TrackedPointer);
     aController.created = true;
     aController.enabled = false;
   }
@@ -280,15 +283,17 @@ struct DeviceDelegateWaveVR::State {
 
       delegate->SetVisible(controller.index, !WVR_IsInputFocusCapturedBySystem());
 
-      const bool bumperPressed =  (controller.is6DoF) ? WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Trigger)
+      const bool bumperPressed = (controller.is6DoF) ? WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Trigger)
                                   : WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Digital_Trigger);
       const bool touchpadPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Touchpad);
       const bool touchpadTouched = WVR_GetInputTouchState(controller.type, WVR_InputId_Alias1_Touchpad);
       const bool menuPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Menu);
 
-      delegate->SetButtonCount(controller.index, controller.is6DoF ? 3 : 2); // For immersive mode
-      delegate->SetButtonState(controller.index, ControllerDelegate::BUTTON_TOUCHPAD, 0, touchpadPressed, touchpadTouched);
-      delegate->SetButtonState(controller.index, ControllerDelegate::BUTTON_TRIGGER, 1, bumperPressed, bumperPressed);
+      // Although Focus only has two buttons, in order to match WebXR input profile (squeeze placeholder),
+      // we make Focus has three buttons.
+      delegate->SetButtonCount(controller.index, 3);
+      delegate->SetButtonState(controller.index, ControllerDelegate::BUTTON_TOUCHPAD, device::kImmersiveButtonTouchpad, touchpadPressed, touchpadTouched);
+      delegate->SetButtonState(controller.index, ControllerDelegate::BUTTON_TRIGGER, device::kImmersiveButtonTrigger, bumperPressed, bumperPressed);
       if (controller.is6DoF) {
         const bool gripPressed = WVR_GetInputButtonState(controller.type, WVR_InputId_Alias1_Grip);
         if (renderMode == device::RenderMode::StandAlone) {
@@ -304,12 +309,22 @@ struct DeviceDelegateWaveVR::State {
             controller.gripPressedCount = -1;
           }
         } else {
-          delegate->SetButtonState(controller.index, ControllerDelegate::BUTTON_OTHERS, 2, gripPressed,
-                                   gripPressed);
+          delegate->SetButtonState(controller.index, ControllerDelegate::BUTTON_OTHERS, device::kImmersiveButtonSqueeze,
+                  gripPressed, gripPressed);
           controller.gripPressedCount = 0;
+        }
+        if (gripPressed && renderMode == device::RenderMode::Immersive) {
+          delegate->SetSqueezeActionStart(controller.index);
+        } else {
+          delegate->SetSqueezeActionStop(controller.index);
         }
       }
 
+      if (bumperPressed && renderMode == device::RenderMode::Immersive) {
+        delegate->SetSelectActionStart(controller.index);
+      } else {
+        delegate->SetSelectActionStop(controller.index);
+      }
       delegate->SetButtonState(controller.index, ControllerDelegate::BUTTON_APP, -1, menuPressed, menuPressed);
 
       const int32_t kNumAxes = 2;
@@ -319,8 +334,8 @@ struct DeviceDelegateWaveVR::State {
         WVR_Axis_t axis = WVR_GetInputAnalogAxis(controller.type, WVR_InputId_Alias1_Touchpad);
         // We are matching touch pad range from {-1, 1} to the Oculus {0, 1}.
         delegate->SetTouchPosition(controller.index, (axis.x + 1) * 0.5, (-axis.y + 1) * 0.5);
-        immersiveAxes[0] = axis.x;
-        immersiveAxes[1] = -axis.y;
+        immersiveAxes[device::kImmersiveAxisTouchpadX] = axis.x;
+        immersiveAxes[device::kImmersiveAxisTouchpadY] = -axis.y;
         controller.touched = true;
       } else if (controller.touched) {
         controller.touched = false;
