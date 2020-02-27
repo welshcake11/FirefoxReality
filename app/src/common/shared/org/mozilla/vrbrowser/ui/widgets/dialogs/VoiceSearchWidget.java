@@ -18,12 +18,15 @@ import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.databinding.DataBindingUtil;
 
 import com.mozilla.speechlibrary.ISpeechRecognitionListener;
 import com.mozilla.speechlibrary.MozillaSpeechService;
 import com.mozilla.speechlibrary.STTResult;
+import com.mozilla.speechlibrary.service.SpeechResultCallback;
+import com.mozilla.speechlibrary.service.SpeechService;
 
 import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.vrbrowser.R;
@@ -280,6 +283,8 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
             mWidgetPlacement.parentHandle = mWidgetManager.getFocusedWindow().getHandle();
             super.show(aShowFlags);
 
+            SpeechService.start(getContext(), mResultCallback);
+
             setStartListeningState();
 
             startVoiceSearch();
@@ -381,4 +386,41 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
     public void onActivityDestroyed(Activity activity) {
 
     }
+
+    SpeechResultCallback mResultCallback = new SpeechResultCallback() {
+        @Override
+        public void onStartListen() {
+            Log.d(LOGTAG, "===> onStartListen");
+        }
+
+        @Override
+        public void onMicActivity() {
+            Log.d(LOGTAG, "===> onMicActivity");
+        }
+
+        @Override
+        public void onDecoding() {
+            Log.d(LOGTAG, "===> onDecoding");
+        }
+
+        @Override
+        public void onSTTResult(@Nullable STTResult result) {
+            Log.d(LOGTAG, "===> onSTTResult");
+        }
+
+        @Override
+        public void onNoVoice() {
+            Log.d(LOGTAG, "===> onNoVoice");
+        }
+
+        @Override
+        public void onCancelled() {
+            Log.d(LOGTAG, "===> onCancelled");
+        }
+
+        @Override
+        public void onError(@Nullable String error) {
+            Log.d(LOGTAG, "===> onError");
+        }
+    };
 }
