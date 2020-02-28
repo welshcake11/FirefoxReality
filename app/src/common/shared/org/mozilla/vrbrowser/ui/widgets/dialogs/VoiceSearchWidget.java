@@ -22,11 +22,10 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.databinding.DataBindingUtil;
 
-import com.mozilla.speechlibrary.ISpeechRecognitionListener;
-import com.mozilla.speechlibrary.MozillaSpeechService;
 import com.mozilla.speechlibrary.STTResult;
 import com.mozilla.speechlibrary.service.SpeechResultCallback;
 import com.mozilla.speechlibrary.service.SpeechService;
+import com.mozilla.speechlibrary.service.SpeechServiceSettings;
 
 import org.mozilla.gecko.util.ThreadUtils;
 import org.mozilla.vrbrowser.R;
@@ -61,7 +60,6 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
     }
 
     private VoiceSearchDialogBinding mBinding;
-    private MozillaSpeechService mMozillaSpeechService;
     private VoiceSearchDelegate mDelegate;
     private ClipDrawable mVoiceInputClipDrawable;
     private RotateAnimation mSearchingAnimation;
@@ -88,9 +86,6 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
 
         mWidgetManager.addPermissionListener(this);
 
-        mMozillaSpeechService = MozillaSpeechService.getInstance();
-        mMozillaSpeechService.setProductTag(getContext().getString(R.string.voice_app_id));
-
         mSearchingAnimation = new RotateAnimation(0, 360f,
                 Animation.RELATIVE_TO_SELF, 0.5f,
                 Animation.RELATIVE_TO_SELF, 0.5f);
@@ -99,7 +94,6 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         mSearchingAnimation.setDuration(ANIMATION_DURATION);
         mSearchingAnimation.setRepeatCount(Animation.INFINITE);
 
-//        mMozillaSpeechService.addListener(mVoiceSearchListener);
         ((Application)aContext.getApplicationContext()).registerActivityLifecycleCallbacks(this);
     }
 
@@ -134,7 +128,6 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
     @Override
     public void releaseWidget() {
         mWidgetManager.removePermissionListener(this);
-//        mMozillaSpeechService.removeListener(mVoiceSearchListener);
         ((Application)getContext().getApplicationContext()).unregisterActivityLifecycleCallbacks(this);
 
         super.releaseWidget();
@@ -161,70 +154,6 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         mWidgetPlacement.translationZ = 0;
     }
 
-//    private ISpeechRecognitionListener mVoiceSearchListener = new ISpeechRecognitionListener() {
-//
-//        public void onSpeechStatusChanged(final MozillaSpeechService.SpeechState aState, final Object aPayload){
-//            if (!mIsSpeechRecognitionRunning) {
-//                return;
-//            }
-//            ((Activity)getContext()).runOnUiThread(() -> {
-//                switch (aState) {
-//                    case DECODING:
-//                        // Handle when the speech object changes to decoding state
-//                        Log.d(LOGTAG, "===> DECODING");
-//                        setDecodingState();
-//                        break;
-//                    case MIC_ACTIVITY:
-//                        // Captures the activity from the microphone
-//                        Log.d(LOGTAG, "===> MIC_ACTIVITY");
-//                        double db = (double)aPayload * -1; // the higher the value, quieter the user/environment is
-//                        db = db == Double.POSITIVE_INFINITY ? MAX_DB : db;
-//                        int level = (int)(MAX_CLIPPING - (((db - MIN_DB) / (MAX_DB - MIN_DB)) * MAX_CLIPPING));
-//                        Log.d(LOGTAG, "===> db:      " + db);
-//                        Log.d(LOGTAG, "===> level    " + level);
-//                        mVoiceInputClipDrawable.setLevel(level);
-//                        break;
-//                    case STT_RESULT:
-//                        // When the api finished processing and returned a hypothesis
-//                        Log.d(LOGTAG, "===> STT_RESULT");
-//                        String transcription = ((STTResult)aPayload).mTranscription;
-//                        float confidence = ((STTResult)aPayload).mConfidence;
-//                        if (mDelegate != null) {
-//                            mDelegate.OnVoiceSearchResult(transcription, confidence);
-//                        }
-//                        hide(KEEP_WIDGET);
-//                        break;
-//                    case START_LISTEN:
-//                        // Handle when the api successfully opened the microphone and started listening
-//                        Log.d(LOGTAG, "===> START_LISTEN");
-//                        break;
-//                    case NO_VOICE:
-//                        // Handle when the api didn't detect any voice
-//                        Log.d(LOGTAG, "===> NO_VOICE");
-//                        setResultState();
-//                        break;
-//                    case CANCELED:
-//                        // Handle when a cancellation was fully executed
-//                        Log.d(LOGTAG, "===> CANCELED");
-//                        if (mDelegate != null) {
-//                            mDelegate.OnVoiceSearchCanceled();
-//                        }
-//                        break;
-//                    case ERROR:
-//                        Log.d(LOGTAG, "===> ERROR: " + aPayload.toString());
-//                        setResultState();
-//                        // Handle when any error occurred
-//                        if (mDelegate != null) {
-//                            mDelegate.OnVoiceSearchError();
-//                        }
-//                        break;
-//                    default:
-//                        break;
-//                }
-//            });
-//        }
-//    };
-
     public void startVoiceSearch() {
         if (ActivityCompat.checkSelfPermission(getContext().getApplicationContext(), Manifest.permission.RECORD_AUDIO) !=
                 PackageManager.PERMISSION_GRANTED) {
@@ -232,21 +161,19 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
                     VOICE_SEARCH_AUDIO_REQUEST_CODE);
         } else {
             String locale = LocaleUtils.getVoiceSearchLanguageTag(getContext());
-//            mMozillaSpeechService.setLanguage(LocaleUtils.mapToMozillaSpeechLocales(locale));
             boolean storeData = SettingsStore.getInstance(getContext()).isSpeechDataCollectionEnabled();
             if (SessionStore.get().getActiveSession().isPrivateMode()) {
                 storeData = false;
             }
-//            mMozillaSpeechService.storeSamples(storeData);
-//            mMozillaSpeechService.storeTranscriptions(storeData);
-//            mMozillaSpeechService.start(getContext().getApplicationContext());
 
-            SpeechService.Settings settings = new SpeechService.Settings();
+            SpeechServiceSettings settings = new SpeechServiceSettings();
             settings.mLanguage = locale;
             settings.mProductTag = getContext().getString(R.string.voice_app_id);
             settings.mStoreSamples = storeData;
             settings.mStoreTranscriptions = storeData;
-            SpeechService.start(getContext(), mResultCallback, settings);
+            SpeechService.start(getContext(),
+                    mResultCallback,
+                    settings);
 
             mIsSpeechRecognitionRunning = true;
         }
@@ -254,7 +181,6 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
 
     public void stopVoiceSearch() {
         try {
-//            mMozillaSpeechService.cancel();
             SpeechService.stop(getContext());
             mIsSpeechRecognitionRunning = false;
 
@@ -344,7 +270,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
             mBinding.voiceSearchAnimationSearching.clearAnimation();
             mBinding.executePendingBindings();
 
-//            startVoiceSearch();
+            startVoiceSearch();
         }, 100);
     }
 
@@ -436,7 +362,7 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
         public void onNoVoice() {
             // Handle when the api didn't detect any voice
             Log.d(LOGTAG, "===> NO_VOICE");
-            setResultState();
+//            setResultState();
         }
 
         @Override
