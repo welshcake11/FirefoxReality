@@ -383,5 +383,20 @@ public class VoiceSearchWidget extends UIDialog implements WidgetManagerDelegate
                 mDelegate.OnVoiceSearchError();
             }
         }
+
+        @Override
+        public void onModelDownloadStarted() {
+            Log.d(LOGTAG, "===> MODEL_DOWNLOAD_STARTED");
+        }
+
+        @Override
+        public void onModelDownloadProgress(int progress) {
+            Log.d(LOGTAG, "===> MODEL_DOWNLOAD_PROGRESS: " + progress);
+        }
+
+        @Override
+        public void onModelDownloadFinished() {
+            Log.d(LOGTAG, "===> MODEL_DOWNLOAD_FINISHED");
+        }
     };
 }
