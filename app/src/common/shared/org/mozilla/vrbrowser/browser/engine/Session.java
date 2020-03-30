@@ -1164,6 +1164,13 @@ public class Session implements ContentBlocking.Delegate, GeckoSession.Navigatio
         return null;
     }
 
+    @Override
+    public void onExternalResponse(@NonNull GeckoSession geckoSession, @NonNull GeckoSession.WebResponseInfo webResponseInfo) {
+        for (GeckoSession.ContentDelegate listener : mContentListeners) {
+            listener.onExternalResponse(geckoSession, webResponseInfo);
+        }
+    }
+
     // TextInput Delegate
 
     @Override

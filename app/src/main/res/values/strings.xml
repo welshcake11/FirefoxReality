@@ -439,6 +439,10 @@
          User-Agent (UA) string of the browser. -->
     <string name="developer_options_ua_mode">User-Agent Mode</string>
 
+    <!-- This string is used to label a set of radio buttons that allow the user to change the
+         default downloads storage. -->
+    <string name="security_options_downloads_storage">Downloads Default Storage</string>
+
     <!-- This string is used to label the 'Desktop' radio button of the 'User-Agent Mode' settings option. -->
     <string name="developer_options_ua_desktop">Desktop</string>
 
@@ -447,6 +451,12 @@
 
     <!-- This string is used to label the 'VR' radio button of the 'User-Agent Mode' settings option. -->
     <string name="developer_options_ua_vr">VR</string>
+
+    <!-- This string is used to label the 'Internal Storage' radio button of the 'Downloads Storage' settings option. -->
+    <string name="privacy_options_downloads_storage_internal">Internal</string>
+
+    <!-- This string is used to label the 'External Storage' radio button of the 'Downloads Storage' settings option. -->
+    <string name="privacy_options_downloads_storage_external">External</string>
 
     <!-- This string is used to label the 'Standard' radio button of the 'Enhanced Tracking protection' settings option. -->
     <string name="privacy_options_tracking_etp">Standard</string>
@@ -913,6 +923,46 @@
          clearing history is displayed. -->
     <string name="history_clear">Clear History</string>
 
+    <!-- This string is displayed as the title of the downloads list, which contains the user's downloaded files. -->
+    <string name="downloads_title">Downloads</string>
+
+    <!-- This string is displayed as the title of the downloads list when the downloads is empty. -->
+    <string name="downloads_empty">Your Downloads list is Empty</string>
+
+    <!-- This string is displayed under the downloads title in the downloads list. -->
+    <string name="downloads_description">You can access your downloads here</string>
+
+    <!-- This string is displayed in the middle of the downloads list while the downloads is being loaded. -->
+    <string name="downloads_loading">Loading Downloads</string>
+
+    <!-- This string is displayed in the "Clear Downloads" button in the downloads list.
+         When pressed the downloads list is cleared. -->
+    <string name="downloads_clear">Clear All</string>
+
+    <!-- This string is displayed in the "Delete All" button in the downloads list.
+         When pressed the all the downloads in the list are deleted both from the list and the disk. -->
+    <string name="downloads_delete">Delete All</string>
+
+    <!-- This string is displayed in the "Sort By" button in the downloads list.
+         When pressed a dropdown menu is displayed with the sorting options. -->
+    <string name="downloads_sort">Sort By</string>
+
+    <!-- This string is displayed as an option in the downloads sorting menu
+         When pressed the download list is sorted in alphabetical order from A to Z. -->
+    <string name="downloads_filename_sort_az">By Name (from A to Z)</string>
+
+    <!-- This string is displayed as an option in the downloads sorting menu
+         When pressed the download list is sorted in alphabetically order from Z to A. -->
+    <string name="downloads_filename_sort_za">By Name (from Z to A)</string>
+
+    <!-- This string is displayed as an option in the downloads sorting menu
+         When pressed the download list is sorted in download date ascending order. -->
+    <string name="downloads_sort_download_date_asc">By Date (Ascending)</string>
+
+    <!-- This string is displayed as an option in the downloads sorting menu
+         When pressed the download list is sorted in download date descending order. -->
+    <string name="downloads_sort_download_date_desc">By Date (Descending)</string>
+
     <!-- This string is displayed is the "Sync" button in the history panel. When pressed the
          history is synced with the Firefox account. -->
     <string name="fxa_sync">Sync</string>
@@ -981,6 +1031,15 @@
     <!-- This string is displayed is the history context menu that is displayed when
          the more button is pressed in a history item. It removes the selected item from favorites. -->
     <string name="history_context_remove_bookmarks">Remove from Bookmarks</string>
+
+    <!-- This string is displayed is the downloads context menu that is displayed when
+         the more button is pressed in a downloads item. It clears the selected item from the downloads list. -->
+    <string name="download_context_clear">Clear</string>
+
+    <!-- This string is displayed is the downloads context menu that is displayed when
+         the more button is pressed in a downloads item. It deletes the selected item from the downloads list
+         and also from disk. -->
+    <string name="download_context_delete">Delete</string>
 
     <!-- This string labels the Reset button that restores the default display settings values. -->
     <string name="display_options_reset">Reset Display Settings</string>
@@ -1150,6 +1209,18 @@
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it opens the target url in a new tab. -->
     <string name="context_menu_open_new_tab_1">Open in a new tab</string>
 
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it triggers a linked element download. -->
+    <string name="context_menu_download_link">Download Link</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it triggers the video element download. -->
+    <string name="context_menu_download_video">Download Video</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it triggers the audio element download. -->
+    <string name="context_menu_download_audio">Download Audio</string>
+
+    <!-- This string is shown in the context menu after a longpress on a link. When clicked it triggers the image element download. -->
+    <string name="context_menu_download_image">Download Image</string>
+
     <!-- This string is shown in the context menu after a longpress on a link. When clicked it copies the target to the clipboard -->
     <string name="context_menu_copy_link">Copy link</string>
 
@@ -1207,6 +1278,14 @@
     <!-- This string is for the tooltip that appears when the user hovers over the 'History' icon in the
          tray and the History view is closed. The button it labels, when pressed, closes the History view. -->
     <string name="close_history_tooltip">Close History</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Downloads' icon in the
+         tray and the Downloads view is closed. The button it labels, when pressed, opens a list view of the user's downloads. -->
+    <string name="open_downloads_tooltip">Open History</string>
+
+    <!-- This string is for the tooltip that appears when the user hovers over the 'Downloads' icon in the
+         tray and the Downloads view is closed. The button it labels, when pressed, closes the Downloads view. -->
+    <string name="close_downloads_tooltip">Close Downloads</string>
 
     <!-- This string is displayed in any button used for removing all the items in the current context. -->
     <string name="remove_all">Remove All</string>
@@ -1299,6 +1378,9 @@
 
     <!-- This string is displayed in the URL bar when the user is in the history panel -->
     <string name="url_history_title">History</string>
+
+    <!-- This string is displayed in the URL bar when the user is in the downloads panel -->
+    <string name="url_downloads_title">Downloads</string>
 
     <!-- This string is displayed in the Clear button on top of the window when in private mode. It only appears
          when there is one window left. When clicked, it closes the private session -->

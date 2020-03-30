@@ -7,6 +7,7 @@ import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -17,10 +18,10 @@ import org.mozilla.geckoview.GeckoSessionSettings;
 import org.mozilla.telemetry.TelemetryHolder;
 import org.mozilla.vrbrowser.R;
 import org.mozilla.vrbrowser.VRBrowserActivity;
-import org.mozilla.vrbrowser.VRBrowserApplication;
 import org.mozilla.vrbrowser.telemetry.GleanMetricsService;
 import org.mozilla.vrbrowser.telemetry.TelemetryWrapper;
 import org.mozilla.vrbrowser.ui.viewmodel.SettingsViewModel;
+import org.mozilla.vrbrowser.ui.widgets.menus.library.SortingContextMenuWidget;
 import org.mozilla.vrbrowser.utils.DeviceType;
 import org.mozilla.vrbrowser.utils.StringUtils;
 import org.mozilla.vrbrowser.utils.SystemUtils;
@@ -46,6 +47,11 @@ public class SettingsStore {
 
         return mSettingsInstance;
     }
+
+    @IntDef(value = { INTERNAL, EXTERNAL})
+    public @interface Storage {}
+    public static final int INTERNAL = 0;
+    public static final int EXTERNAL = 1;
 
     private Context mContext;
     private SharedPreferences mPrefs;
@@ -91,6 +97,8 @@ public class SettingsStore {
     public final static boolean RESTORE_TABS_ENABLED = true;
     public final static boolean BYPASS_CACHE_ON_RELOAD = false;
     public final static boolean MULTI_E10S = false;
+    public final static int DOWNLOADS_STORAGE_DEFAULT = INTERNAL;
+    public final static int DOWNLOADS_SORTING_ORDER_DEFAULT = SortingContextMenuWidget.SORT_FILENAME_AZ;
 
     // Enable telemetry by default (opt-out).
     public final static boolean CRASH_REPORTING_DEFAULT = false;
@@ -706,6 +714,26 @@ public class SettingsStore {
 
     public boolean isMultiE10s() {
         return mPrefs.getBoolean(mContext.getString(R.string.settings_key_multi_e10s), MULTI_E10S);
+    }
+
+    public void setDownloadsStorage(@Storage int storage) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putInt(mContext.getString(R.string.settings_key_downloads_external), storage);
+        editor.commit();
+    }
+
+    public @Storage int getDownloadsStorage() {
+        return mPrefs.getInt(mContext.getString(R.string.settings_key_downloads_external), DOWNLOADS_STORAGE_DEFAULT);
+    }
+
+    public void setDownloadsSortingOrder(@SortingContextMenuWidget.Order int order) {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putInt(mContext.getString(R.string.settings_key_downloads_sorting_order), order);
+        editor.commit();
+    }
+
+    public @Storage int getDownloadsSortingOrder() {
+        return mPrefs.getInt(mContext.getString(R.string.settings_key_downloads_sorting_order), DOWNLOADS_SORTING_ORDER_DEFAULT);
     }
 }
 
