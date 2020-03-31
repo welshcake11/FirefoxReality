@@ -5,7 +5,9 @@
 
 package org.mozilla.vrbrowser.ui.widgets;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -27,6 +29,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.annotation.UiThread;
+import androidx.core.content.FileProvider;
 import androidx.lifecycle.ViewModelProvider;
 
 import org.mozilla.geckoview.AllowOrDeny;
@@ -62,6 +65,7 @@ import org.mozilla.vrbrowser.utils.StringUtils;
 import org.mozilla.vrbrowser.utils.UrlUtils;
 import org.mozilla.vrbrowser.utils.ViewUtils;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -1419,9 +1423,11 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         Runnable download = () -> {
             if (showConfirmDialog) {
                 mWidgetManager.getFocusedWindow().showConfirmPrompt(
-                        "Download",
+                        getResources().getString(R.string.download_confirm_title),
                         downloadJob.getFilename(),
-                        new String[]{"Cancel", "Download"},
+                        new String[]{
+                                getResources().getString(R.string.download_confirm_cancel),
+                                getResources().getString(R.string.download_confirm_download)},
                         index -> mDownloadsManager.startDownload(downloadJob)
                 );
 
@@ -1509,10 +1515,37 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     @Override
     public void onExternalResponse(@NonNull GeckoSession geckoSession, @NonNull GeckoSession.WebResponseInfo webResponseInfo) {
-        // We don't wat to trigger downloads of already downloaded files
+        // We don't want to trigger downloads of already downloaded files that we can't open
+        // so we let the system handle it.
         if (!UrlUtils.isFileUri(webResponseInfo.uri)) {
             DownloadJob job = DownloadJob.from(webResponseInfo);
             startDownload(job, true);
+
+        } else {
+            showConfirmPrompt(getResources().getString(R.string.download_open_file_unsupported_title),
+                    getResources().getString(R.string.download_open_file_unsupported_body),
+                    new String[]{
+                            getResources().getString(R.string.download_open_file_unsupported_cancel),
+                            getResources().getString(R.string.download_open_file_unsupported_open)
+                    }, index -> {
+                        if (index == PromptDialogWidget.POSITIVE) {
+                            Uri contentUri = FileProvider.getUriForFile(
+                                    getContext(),
+                                    getContext().getApplicationContext().getPackageName() + ".provider",
+                                    new File(webResponseInfo.uri.substring("file://".length())));
+                            Intent newIntent = new Intent(Intent.ACTION_VIEW);
+                            newIntent.setDataAndType(contentUri, webResponseInfo.contentType);
+                            newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            try {
+                                getContext().startActivity(newIntent);
+                            } catch (ActivityNotFoundException ex) {
+                                showAlert(
+                                        getResources().getString(R.string.download_open_file_error_title),
+                                        getResources().getString(R.string.download_open_file_error_body),
+                                        null);
+                            }
+                        }
+                    });
         }
     }
 
