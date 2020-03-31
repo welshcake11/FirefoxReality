@@ -6,6 +6,7 @@
 package org.mozilla.vrbrowser.ui.widgets;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -14,6 +15,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
@@ -84,7 +86,7 @@ import static org.mozilla.vrbrowser.utils.ServoUtils.isInstanceOfServoSession;
 public class WindowWidget extends UIWidget implements SessionChangeListener,
         GeckoSession.ContentDelegate, GeckoSession.NavigationDelegate, VideoAvailabilityListener,
         GeckoSession.HistoryDelegate, GeckoSession.ProgressDelegate, GeckoSession.SelectionActionDelegate,
-        Session.WebXRStateChangedListener {
+        Session.WebXRStateChangedListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     @IntDef(value = { SESSION_RELEASE_DISPLAY, SESSION_DO_NOT_RELEASE_DISPLAY})
     public @interface OldSessionDisplayAction {}
@@ -136,6 +138,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     private Executor mUIThreadExecutor;
     private WindowViewModel mViewModel;
     private CopyOnWriteArrayList<Runnable> mSetViewQueuedCalls;
+    private SharedPreferences mPrefs;
 
     public interface WindowListener {
         default void onFocusRequest(@NonNull WindowWidget aWindow) {}
@@ -143,6 +146,15 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         default void onSessionChanged(@NonNull Session aOldSession, @NonNull Session aSession) {}
         default void onFullScreen(@NonNull WindowWidget aWindow, boolean aFullScreen) {}
         default void onVideoAvailabilityChanged(@NonNull WindowWidget aWindow) {}
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(@NonNull SharedPreferences sharedPreferences, String key) {
+        if (key.equals(getContext().getString(R.string.settings_key_drm_playback))) {
+            if (mViewModel.getIsDrmUsed().getValue().get() && getSession() != null) {
+                getSession().reload(GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
+            }
+        }
     }
 
     public WindowWidget(Context aContext, int windowId, boolean privateMode)  {
@@ -161,6 +173,9 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
 
     private void initialize(Context aContext) {
         mSetViewQueuedCalls = new CopyOnWriteArrayList<>();
+
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        mPrefs.registerOnSharedPreferenceChangeListener(this);
 
         mWidgetManager = (WidgetManagerDelegate) aContext;
         mBorderWidth = SettingsStore.getInstance(aContext).getTransparentBorderWidth();
@@ -937,6 +952,8 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         cleanListeners(mSession);
         GeckoSession session = mSession.getGeckoSession();
 
+        mPrefs.unregisterOnSharedPreferenceChangeListener(this);
+
         mSetViewQueuedCalls.clear();
         if (mSession != null) {
             mSession.releaseDisplay();
@@ -1076,6 +1093,10 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
 
         return false;
+    }
+
+    public void setDrmUsed(boolean isEnabled) {
+        mViewModel.setIsDrmUsed(isEnabled);
     }
 
     // Session.GeckoSessionChange
@@ -1692,6 +1713,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     @Override
     public void onLocationChange(@NonNull GeckoSession session, @Nullable String url) {
         mViewModel.setUrl(url);
+        mViewModel.setIsDrmUsed(false);
 
         if (StringUtils.isEmpty(url)) {
             mViewModel.setIsBookmarked(false);

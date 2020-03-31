@@ -178,7 +178,12 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
         } else if (aType == PERMISSION_GEOLOCATION) {
             type = PermissionWidget.PermissionType.Location;
         } else if (aType == PERMISSION_MEDIA_KEY_SYSTEM_ACCESS) {
-            callback.grant();
+            if (SettingsStore.getInstance(mContext).isDrmContentPlaybackEnabled()) {
+                callback.grant();
+            } else {
+                callback.reject();
+            }
+            mWidgetManager.getFocusedWindow().setDrmUsed(true);
             return;
         } else {
             Log.e(LOGTAG, "onContentPermissionRequest unknown permission: " + aType);

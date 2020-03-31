@@ -9,11 +9,12 @@ import androidx.room.PrimaryKey;
 
 @Entity
 public class SitePermission {
-    @IntDef(value = { SITE_PERMISSION_POPUP, SITE_PERMISSION_WEBXR, SITE_PERMISSION_TRACKING})
+    @IntDef(value = { SITE_PERMISSION_POPUP, SITE_PERMISSION_WEBXR, SITE_PERMISSION_TRACKING, SITE_PERMISSION_DRM})
     public @interface Category {}
     public static final int SITE_PERMISSION_POPUP = 0;
     public static final int SITE_PERMISSION_WEBXR = 1;
     public static final int SITE_PERMISSION_TRACKING = 2;
+    public static final int SITE_PERMISSION_DRM = 3;
 
     public SitePermission(@NonNull String url, @NonNull String principal, boolean allowed, @Category int category) {
         this.url = url;

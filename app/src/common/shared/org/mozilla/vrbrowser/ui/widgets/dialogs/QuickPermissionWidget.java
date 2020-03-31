@@ -80,6 +80,15 @@ public class QuickPermissionWidget extends UIWidget implements WidgetManagerDele
                 mBinding.blockButton.setText(R.string.tracking_dialog_button_enable);
                 break;
             }
+            case SitePermission.SITE_PERMISSION_DRM: {
+                mBinding.message.setText(
+                        getResources().getString(R.string.drm_dialog_message,
+                                getResources().getString(R.string.app_name),
+                                getResources().getString(R.string.sumo_drm_url)));
+                mBinding.allowButton.setText(R.string.drm_dialog_button_disable);
+                mBinding.blockButton.setText(R.string.drm_dialog_button_enable);
+                break;
+            }
         }
 
         mBinding.message.setLinkClickListener((widget, url) -> {

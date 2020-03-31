@@ -609,6 +609,10 @@
     <string name="security_options_drm_content">Play DRM-Controlled Content (&lt;a href="http://somesite.com/">Learn More&lt;/a>)</string>
 
     <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
+     and is used to enable or disable playback of DRM controlled content. -->
+    <string name="security_options_drm_content_v1">Automatically allow sites to identify your device to play DRM-controlled content. (&lt;a href="%1$s">Learn More&lt;/a>)</string>
+
+    <!-- This string labels an Allow/Don't Allow switch in the Privacy and Security settings dialog
      and is used to enable or disable the tabs restoration after a fresh app start. -->
     <string name="security_options_restore_tabs">Restore tabs and windows after restart</string>
 
@@ -1108,6 +1112,16 @@
          browser's navigation bar. The button it labels, when pressed, Shows the pop-up blocked dialog. -->
     <string name="popup_tooltip">Pop-Up Blocked</string>
 
+    <!-- This string is for the tooltip that appears upon hovering the 'DRM' button in the
+         browser's navigation bar when DRM is allowed for the site. The button it labels, when pressed,
+         shows the DRM bubble on top of the button. -->
+    <string name="drm_enabled_tooltip">DRM Allowed</string>
+
+    <!-- This string is for the tooltip that appears upon hovering the 'DRM' button in the
+         browser's navigation bar when DRM not allowed for the site. The button it labels, when pressed,
+         shows the DRM bubble on top of the button. -->
+    <string name="drm_disabled_tooltip">DRM Not Allowed</string>
+
     <!-- This string is for the tooltip that when clicking the 'Info' (ⓘ) icon visible next to the current website's
          URL in the URL bar. The button it labels, when pressed, shows information about the site. -->
     <string name="site_info_tooltip">Show site info.</string>
@@ -1463,4 +1477,13 @@ the Select` button. When clicked it closes all the previously selected tabs -->
 
     <!-- This string is displayed in the disable button of the quick Tracking Protection dialog, accessed from the Tracking Protection icon in the URL bar. -->
     <string name="tracking_dialog_button_disable">Disable</string>
+
+    <!-- This string is displayed in the title of the quick DRM dialog, accessed from the DRM icon in the URL bar. -->
+    <string name="drm_dialog_message">Some audio or video on this site uses DRM software, which may limit what %1$s can let you do with it (&lt;a href="%2$s">Learn More&lt;/a>)</string>
+
+    <!-- This string is displayed in the enable button of the quick DRM dialog, accessed from the DRM icon in the URL bar. -->
+    <string name="drm_dialog_button_enable">Enable</string>
+
+    <!-- This string is displayed in the disable button of the quick DRM dialog, accessed from the DRM icon in the URL bar. -->
+    <string name="drm_dialog_button_disable">Disable</string>
 </resources>
