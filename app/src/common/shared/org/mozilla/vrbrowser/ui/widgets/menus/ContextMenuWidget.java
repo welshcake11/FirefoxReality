@@ -129,20 +129,26 @@ public class ContextMenuWidget extends MenuWidget {
         }
         mItems.add(new MenuWidget.MenuItem(getContext().getString(R.string.context_menu_copy_link), 0, () -> {
             ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+            Uri uri;
             if (aContextElement.linkUri != null) {
-                Uri uri = Uri.parse(aContextElement.linkUri);
-                if (uri != null) {
-                    String label = aContextElement.title;
-                    if (StringUtils.isEmpty(label)) {
-                        label = aContextElement.altText;
-                    }
-                    if (StringUtils.isEmpty(label)) {
-                        label = aContextElement.altText;
-                    }
-                    if (StringUtils.isEmpty(label)) {
-                        label = aContextElement.linkUri;
-                    }
-                    ClipData clip = ClipData.newRawUri(label, uri);
+                uri = Uri.parse(aContextElement.linkUri);
+
+            } else {
+                uri = Uri.parse(aContextElement.srcUri);
+            }
+            if (uri != null) {
+                String label = aContextElement.title;
+                if (StringUtils.isEmpty(label)) {
+                    label = aContextElement.altText;
+                }
+                if (StringUtils.isEmpty(label)) {
+                    label = aContextElement.altText;
+                }
+                if (StringUtils.isEmpty(label)) {
+                    label = uri.toString();
+                }
+                ClipData clip = ClipData.newRawUri(label, uri);
+                if (clipboard != null) {
                     clipboard.setPrimaryClip(clip);
                 }
             }
