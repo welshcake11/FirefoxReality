@@ -969,14 +969,14 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
     public void onTrackingButtonClicked() {
         toggleQuickPermission(mBinding.navigationBarNavigation.urlBar.getTrackingButton(),
                 SitePermission.SITE_PERMISSION_TRACKING,
-                mViewModel.getIsTrackingEnabled().getValue().get());
+                !mViewModel.getIsTrackingEnabled().getValue().get());
     }
 
     @Override
     public void onDrmButtonClicked() {
         toggleQuickPermission(mBinding.navigationBarNavigation.urlBar.getTrackingButton(),
                 SitePermission.SITE_PERMISSION_DRM,
-                SettingsStore.getInstance(getContext()).isDrmContentPlaybackEnabled());
+                !SettingsStore.getInstance(getContext()).isDrmContentPlaybackEnabled());
     }
 
     // VoiceSearch Delegate
@@ -1244,11 +1244,11 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             public void onBlock() {
                 if (aCategory == SITE_PERMISSION_TRACKING) {
                     if (getSession() != null) {
-                        mTrackingDelegate.remove(getSession());
+                        mTrackingDelegate.add(getSession());
                     }
 
                 } else if (aCategory == SITE_PERMISSION_DRM) {
-                    SettingsStore.getInstance(getContext()).setDrmContentPlaybackEnabled(true);
+                    SettingsStore.getInstance(getContext()).setDrmContentPlaybackEnabled(false);
 
                 } else {
                     SessionStore.get().setPermissionAllowed(uri, aCategory, false);
@@ -1260,11 +1260,11 @@ public class NavigationBarWidget extends UIWidget implements GeckoSession.Naviga
             public void onAllow() {
                 if (aCategory == SITE_PERMISSION_TRACKING) {
                     if (getSession() != null) {
-                        mTrackingDelegate.add(getSession());
+                        mTrackingDelegate.remove(getSession());
                     }
 
                 } else if (aCategory == SITE_PERMISSION_DRM) {
-                    SettingsStore.getInstance(getContext()).setDrmContentPlaybackEnabled(false);
+                    SettingsStore.getInstance(getContext()).setDrmContentPlaybackEnabled(true);
 
                 } else {
                     SessionStore.get().setPermissionAllowed(uri, aCategory, true);

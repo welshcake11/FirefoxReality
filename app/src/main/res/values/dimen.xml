@@ -237,7 +237,7 @@
 
     <!-- Quick Permission -->
     <dimen name="quick_permission_width">420dp</dimen>
-    <dimen name="quick_permission_height">260dp</dimen>
+    <dimen name="quick_permission_height">220dp</dimen>
 
     <!-- Hamburger Menu -->
     <dimen name="hamburger_menu_width">300dp</dimen>
