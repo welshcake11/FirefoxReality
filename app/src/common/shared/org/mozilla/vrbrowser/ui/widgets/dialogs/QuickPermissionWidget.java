@@ -48,6 +48,16 @@ public class QuickPermissionWidget extends UIWidget implements WidgetManagerDele
 
     public void updateUI() {
         switch (mCategory) {
+            case SitePermission.SITE_PERMISSION_POPUP: {
+                mBinding.message.setText(
+                        getResources().getString(R.string.popup_permission_dialog_message,
+                                mBinding.getIsBlocked() ?
+                                        getResources().getString(R.string.off).toUpperCase() :
+                                        getResources().getString(R.string.on).toUpperCase()));
+                mBinding.setOnText(getResources().getString(R.string.popup_dialog_button_block));
+                mBinding.setOffText(getResources().getString(R.string.popup_dialog_button_not_block));
+                break;
+            }
             case SitePermission.SITE_PERMISSION_WEBXR: {
                 mBinding.message.setText(
                         getResources().getString(R.string.webxr_permission_dialog_message,

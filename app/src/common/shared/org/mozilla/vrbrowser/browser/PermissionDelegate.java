@@ -105,7 +105,7 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
                     .findFirst().orElse(null);
         }
 
-        if (site == null || site.allowed) {
+        if (site == null) {
             aCallback.grant();
             session.setWebXRState(SessionState.WEBXR_ALLOWED);
         } else {
@@ -279,24 +279,35 @@ public class PermissionDelegate implements GeckoSession.PermissionDelegate, Widg
         }
     }
 
-    public void setPermissionAllowed(String uri, @SitePermission.Category int category, boolean allowed) {
+    public void addPermissionException(String uri, @SitePermission.Category int category) {
         @Nullable SitePermission site = mSitePermissions.stream()
                 .filter((item) -> item.category == category && item.url.equals(uri))
                 .findFirst().orElse(null);
-        boolean wasAllowed = site == null || site.allowed;
-        if (allowed == wasAllowed) {
-            return;
+
+        if (site == null) {
+            site = new SitePermission(uri, uri, category);
+            mSitePermissions.add(site);
         }
-        if (allowed) {
-            mSitePermissions.removeIf(sitePermission -> sitePermission.url.equals(uri));
-            mSitePermissionModel.deleteSite(site);
-        } else {
-            if (site == null) {
-                site = new SitePermission(uri, uri, false, category);
-                mSitePermissions.add(site);
+        mSitePermissionModel.insertSite(site);
+
+        // Reload URIs with the same domain
+        for (WindowWidget window: mWidgetManager.getWindows().getCurrentWindows()) {
+            Session session = window.getSession();
+            if (uri.equalsIgnoreCase(UrlUtils.getHost(session.getCurrentUri()))) {
+                session.reload(GeckoSession.LOAD_FLAGS_BYPASS_CACHE);
             }
-            site.allowed = false;
-            mSitePermissionModel.insertSite(site);
+        }
+
+    }
+
+    public void removePermissionException(String uri, @SitePermission.Category int category) {
+        @Nullable SitePermission site = mSitePermissions.stream()
+                .filter((item) -> item.category == category && item.url.equals(uri))
+                .findFirst().orElse(null);
+
+        mSitePermissions.removeIf(sitePermission -> sitePermission.url.equals(uri));
+        if (site != null) {
+            mSitePermissionModel.deleteSite(site);
         }
 
         // Reload URIs with the same domain

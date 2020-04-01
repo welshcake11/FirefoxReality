@@ -344,7 +344,7 @@ public class NavigationURLBar extends FrameLayout {
         return mBinding.popup;
     }
 
-    public UIButton getWebxRButton() {
+    public UIButton getWebXRButton() {
         return mBinding.webxr;
     }
 

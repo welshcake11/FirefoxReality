@@ -14,12 +14,16 @@ public class SettingsViewModel extends AndroidViewModel {
 
     private MutableLiveData<ObservableBoolean> isTrackingProtectionEnabled;
     private MutableLiveData<ObservableBoolean> isDRMEnabled;
+    private MutableLiveData<ObservableBoolean> isPopupBlockingEnabled;
+    private MutableLiveData<ObservableBoolean> isWebXREnabled;
 
     public SettingsViewModel(@NonNull Application application) {
         super(application);
 
         isTrackingProtectionEnabled = new MutableLiveData<>(new ObservableBoolean(false));
         isDRMEnabled = new MutableLiveData<>(new ObservableBoolean(false));
+        isPopupBlockingEnabled = new MutableLiveData<>(new ObservableBoolean(false));
+        isWebXREnabled = new MutableLiveData<>(new ObservableBoolean(false));
     }
 
     public void refresh() {
@@ -29,6 +33,12 @@ public class SettingsViewModel extends AndroidViewModel {
 
         boolean drmEnabled = SettingsStore.getInstance(getApplication().getBaseContext()).isDrmContentPlaybackEnabled();
         isDRMEnabled = new MutableLiveData<>(new ObservableBoolean(drmEnabled));
+
+        boolean popupBlockingEnabled = SettingsStore.getInstance(getApplication().getBaseContext()).isPopUpsBlockingEnabled();
+        isPopupBlockingEnabled = new MutableLiveData<>(new ObservableBoolean(popupBlockingEnabled));
+
+        boolean webxrEnabled = SettingsStore.getInstance(getApplication().getBaseContext()).isWebXREnabled();
+        isWebXREnabled = new MutableLiveData<>(new ObservableBoolean(webxrEnabled));
     }
 
     public void setIsTrackingProtectionEnabled(boolean isEnabled) {
@@ -45,6 +55,22 @@ public class SettingsViewModel extends AndroidViewModel {
 
     public MutableLiveData<ObservableBoolean> getIsDrmEnabled() {
         return isDRMEnabled;
+    }
+
+    public void setIsPopUpBlockingEnabled(boolean isEnabled) {
+        this.isPopupBlockingEnabled.setValue(new ObservableBoolean(isEnabled));
+    }
+
+    public MutableLiveData<ObservableBoolean> getIsPopUpBlockingEnabled() {
+        return isPopupBlockingEnabled;
+    }
+
+    public void setIsWebXREnabled(boolean isEnabled) {
+        this.isWebXREnabled.setValue(new ObservableBoolean(isEnabled));
+    }
+
+    public MutableLiveData<ObservableBoolean> getIsWebXREnabled() {
+        return isWebXREnabled;
     }
 
 }

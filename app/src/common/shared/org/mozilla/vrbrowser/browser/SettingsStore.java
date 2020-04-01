@@ -225,6 +225,8 @@ public class SettingsStore {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_drm_playback), isEnabled);
         editor.commit();
+
+        mSettingsViewModel.setIsDrmEnabled(isEnabled);
     }
 
     public int getTrackingProtectionLevel() {
@@ -618,6 +620,8 @@ public class SettingsStore {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_pop_up_blocking), isEnabled);
         editor.commit();
+
+        mSettingsViewModel.setIsPopUpBlockingEnabled(isEnabled);
     }
 
     public boolean isWebXREnabled() {
@@ -628,6 +632,8 @@ public class SettingsStore {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putBoolean(mContext.getString(R.string.settings_key_webxr), isEnabled);
         editor.commit();
+
+        mSettingsViewModel.setIsWebXREnabled(isEnabled);
     }
 
     public void setWhatsNewDisplayed(boolean isEnabled) {

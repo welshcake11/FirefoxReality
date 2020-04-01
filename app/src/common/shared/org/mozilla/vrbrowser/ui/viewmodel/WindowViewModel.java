@@ -55,6 +55,7 @@ public class WindowViewModel extends AndroidViewModel {
     private MutableLiveData<ObservableBoolean> isFocused;
     private MutableLiveData<ObservableBoolean> isUrlEmpty;
     private MutableLiveData<ObservableBoolean> isPopUpAvailable;
+    private MutableLiveData<ObservableBoolean> isPopUpBlocked;
     private MutableLiveData<ObservableBoolean> canGoForward;
     private MutableLiveData<ObservableBoolean> canGoBack;
     private MutableLiveData<ObservableBoolean> isInVRVideo;
@@ -132,6 +133,7 @@ public class WindowViewModel extends AndroidViewModel {
         isFocused = new MutableLiveData<>(new ObservableBoolean(false));
         isUrlEmpty = new MutableLiveData<>(new ObservableBoolean(true));
         isPopUpAvailable = new MutableLiveData<>(new ObservableBoolean(false));
+        isPopUpBlocked = new MutableLiveData<>(new ObservableBoolean(false));
         canGoForward = new MutableLiveData<>(new ObservableBoolean(false));
         canGoBack = new MutableLiveData<>(new ObservableBoolean(false));
         isInVRVideo = new MutableLiveData<>(new ObservableBoolean(false));
@@ -306,6 +308,7 @@ public class WindowViewModel extends AndroidViewModel {
         isFocused.postValue(isFocused.getValue());
         isUrlEmpty.postValue(isUrlEmpty.getValue());
         isPopUpAvailable.postValue(isPopUpAvailable.getValue());
+        isPopUpBlocked.postValue(isPopUpBlocked.getValue());
         canGoForward.postValue(canGoForward.getValue());
         canGoBack.postValue(canGoBack.getValue());
         isInVRVideo.postValue(isInVRVideo.getValue());
@@ -669,6 +672,15 @@ public class WindowViewModel extends AndroidViewModel {
 
     public void setIsPopUpAvailable(boolean isPopUpAvailable) {
         this.isPopUpAvailable.postValue(new ObservableBoolean(isPopUpAvailable));
+    }
+
+    @NonNull
+    public MutableLiveData<ObservableBoolean> getIsPopUpBlocked() {
+        return isPopUpBlocked;
+    }
+
+    public void setIsPopUpBlocked(boolean isPopUpBlocked) {
+        this.isPopUpBlocked.postValue(new ObservableBoolean(isPopUpBlocked));
     }
 
     @NonNull

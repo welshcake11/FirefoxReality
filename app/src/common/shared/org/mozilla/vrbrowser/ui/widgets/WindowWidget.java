@@ -86,7 +86,8 @@ import static org.mozilla.vrbrowser.utils.ServoUtils.isInstanceOfServoSession;
 public class WindowWidget extends UIWidget implements SessionChangeListener,
         GeckoSession.ContentDelegate, GeckoSession.NavigationDelegate, VideoAvailabilityListener,
         GeckoSession.HistoryDelegate, GeckoSession.ProgressDelegate, GeckoSession.SelectionActionDelegate,
-        Session.WebXRStateChangedListener, SharedPreferences.OnSharedPreferenceChangeListener {
+        Session.WebXRStateChangedListener, Session.PopUpStateChangedListener,
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
     @IntDef(value = { SESSION_RELEASE_DISPLAY, SESSION_DO_NOT_RELEASE_DISPLAY})
     public @interface OldSessionDisplayAction {}
@@ -247,10 +248,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         // Check Windows.placeWindow method for remaining placement set-up
     }
 
-    public void setPopUpDelegate(@Nullable PromptDelegate.PopUpDelegate delegate) {
-        mPromptDelegate.setPopupDelegate(delegate);
-    }
-
     void setupListeners(Session aSession) {
         aSession.addSessionChangeListener(this);
         aSession.addContentListener(this);
@@ -260,6 +257,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         aSession.setHistoryDelegate(this);
         aSession.addSelectionActionListener(this);
         aSession.addWebXRStateChangedListener(this);
+        aSession.addPopUpStateChangedListener(this);
     }
 
     void cleanListeners(Session aSession) {
@@ -271,6 +269,7 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         aSession.setHistoryDelegate(null);
         aSession.removeSelectionActionListener(this);
         aSession.removeWebXRStateChangedListener(this);
+        aSession.removePopUpStateChangedListener(this);
     }
 
     @Override
@@ -1078,21 +1077,6 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
         }
         mCaptureOnPageStop = false;
         hideLibraryPanels();
-    }
-
-
-    public void showPopUps() {
-        if (mPromptDelegate != null) {
-            mPromptDelegate.showPopUps(getSession().getGeckoSession());
-        }
-    }
-
-    public boolean hasPendingPopUps() {
-        if (mPromptDelegate != null) {
-            return mPromptDelegate.hasPendingPopUps(getSession().getGeckoSession());
-        }
-
-        return false;
     }
 
     public void setDrmUsed(boolean isEnabled) {
@@ -1974,9 +1958,18 @@ public class WindowWidget extends UIWidget implements SessionChangeListener,
     }
 
     // WebXRStateChangedListener
+
     @Override
     public void onWebXRStateChanged(Session aSession, @SessionState.WebXRState int aWebXRState) {
         mViewModel.setIsWebXRBlocked(aWebXRState == SessionState.WEBXR_BLOCKED);
         mViewModel.setIsWebXRUsed(aWebXRState != SessionState.WEBXR_UNUSED);
+    }
+
+    // PopUpStateChangedListener
+
+    @Override
+    public void onPopUpStateChanged(Session aSession, @SessionState.PopupState int aPopUpState) {
+        mViewModel.setIsPopUpBlocked(aPopUpState == SessionState.POPUP_BLOCKED);
+        mViewModel.setIsPopUpAvailable(aPopUpState != SessionState.POPUP_UNUSED);
     }
 }
