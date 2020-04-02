@@ -69,7 +69,7 @@
                     android:id="@+id/popUpsBlockingExceptionsButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:buttonText="@string/security_options_block_pup_up_settings" />
+                    app:buttonText="@string/security_options_block_pup_up_settings_v1" />
 
                 <org.mozilla.vrbrowser.ui.views.settings.SwitchSetting
                     android:id="@+id/webxrSwitch"
@@ -81,7 +81,7 @@
                     android:id="@+id/webxrExceptionsButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:buttonText="@string/security_options_block_pup_up_settings" />
+                    app:buttonText="@string/security_options_webxr_settings" />
 
                 <org.mozilla.vrbrowser.ui.views.settings.ButtonSetting
                     android:id="@+id/trackingProtectionButton"
