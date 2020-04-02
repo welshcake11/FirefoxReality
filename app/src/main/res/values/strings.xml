@@ -104,7 +104,7 @@
 
     <!-- This string is used as the title of the pop-ups dialog used to remove sites from the currently
          allowed pop-up sites. -->
-    <string name="settings_privacy_policy_popups_title">Pop-ups permissions</string>
+    <string name="settings_privacy_policy_popups_title">Exceptions for Pop-Ups</string>
 
     <!-- This string is displayed under the title the pop-ups dialog used to remove sites from the currently
          allowed pop-up sites. -->
@@ -999,7 +999,7 @@
     <string name="privacy_options_popups_reset">Reset Block Pop-Ups Windows Settings</string>
 
     <!-- This string is displayed on top of the allowed sites list in the allowed pop-ups panel. -->
-    <string name="privacy_options_popups_list_header">The following websites have requested to open pop-up windows:</string>
+    <string name="privacy_options_popups_list_header_v1">Following websites have permission to open pop-up windows:</string>
 
     <!-- This string is displayed in the first line of a text that's displayed in the middle of allowed pop-ups panel instead of the exceptions list
          when there are no exceptions. -->
