@@ -546,7 +546,7 @@ BrowserWorld::State::UpdateControllers(bool& aRelayoutWidgets) {
       }
     } else if (controller.widget) {
       if (wasDragging) {
-        VRBrowser::HandleMotionEvent(controller.widget, controller.index, (jboolean) pressed, controller.lastTouchX, controller.lastTouchY);
+        VRBrowser::HandleMotionEvent(0, controller.index, jboolean(controller.focused), (jboolean) pressed, 0.0f, 0.0f);
       }
       VRBrowser::HandleMotionEvent(0, controller.index, jboolean(controller.focused), (jboolean) pressed, 0.0f, 0.0f);
       controller.widget = 0;
