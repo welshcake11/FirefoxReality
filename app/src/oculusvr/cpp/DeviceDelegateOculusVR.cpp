@@ -147,6 +147,9 @@ struct DeviceDelegateOculusVR::State {
     }
     initialized = true;
     std::string version = vrapi_GetVersionString();
+    std::string notes = "Oculus Driver Version: ";
+    notes += version;
+    VRBrowser::AppendAppNotesToCrashLog(notes);
     if (version.find("1.1.32.0") != std::string::npos) {
       VRB_ERROR("Force layer clip due to driver bug. VRAPI Runtime Version: %s",vrapi_GetVersionString());
       OculusLayer::sForceClip = true;

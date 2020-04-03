@@ -56,6 +56,8 @@ const char* kOnAppLink = "onAppLink";
 const char* kOnAppLinkSignature = "(Ljava/lang/String;)V";
 const char* kDisableLayers = "disableLayers";
 const char* kDisableLayersSignature = "()V";
+const char* kAppendAppNotesToCrashReport = "appendAppNotesToCrashReport";
+const char* kAppendAppNotesToCrashReportSignature = "(Ljava/lang/String;)V";
 
 JNIEnv* sEnv = nullptr;
 jclass sBrowserClass = nullptr;
@@ -83,6 +85,7 @@ jmethodID sHaltActivity = nullptr;
 jmethodID sHandlePoorPerformance = nullptr;
 jmethodID sOnAppLink = nullptr;
 jmethodID sDisableLayers = nullptr;
+jmethodID sAppendAppNotesToCrashReport = nullptr;
 }
 
 namespace crow {
@@ -125,6 +128,7 @@ VRBrowser::InitializeJava(JNIEnv* aEnv, jobject aActivity) {
   sHandlePoorPerformance = FindJNIMethodID(sEnv, sBrowserClass, kHandlePoorPerformance, kHandlePoorPerformanceSignature);
   sOnAppLink = FindJNIMethodID(sEnv, sBrowserClass, kOnAppLink, kOnAppLinkSignature);
   sDisableLayers = FindJNIMethodID(sEnv, sBrowserClass, kDisableLayers, kDisableLayersSignature);
+  sAppendAppNotesToCrashReport = FindJNIMethodID(sEnv, sBrowserClass, kAppendAppNotesToCrashReport, kAppendAppNotesToCrashReportSignature);
 }
 
 void
@@ -162,6 +166,7 @@ VRBrowser::ShutdownJava() {
   sOnAppLink = nullptr;
   sDisableLayers = nullptr;
   sEnv = nullptr;
+  kAppendAppNotesToCrashReport = nullptr;
 }
 
 void
@@ -362,6 +367,15 @@ void
 VRBrowser::DisableLayers() {
   if (!ValidateMethodID(sEnv, sActivity, sDisableLayers, __FUNCTION__)) { return; }
   sEnv->CallVoidMethod(sActivity, sDisableLayers);
+  CheckJNIException(sEnv, __FUNCTION__);
+}
+
+void
+VRBrowser::AppendAppNotesToCrashLog(const std::string& aNotes) {
+  if (!ValidateMethodID(sEnv, sActivity, sAppendAppNotesToCrashReport, __FUNCTION__)) { return; }
+  jstring notes = sEnv->NewStringUTF(aNotes.c_str());
+  sEnv->CallVoidMethod(sActivity, sAppendAppNotesToCrashReport, notes);
+  sEnv->DeleteLocalRef(notes);
   CheckJNIException(sEnv, __FUNCTION__);
 }
 
