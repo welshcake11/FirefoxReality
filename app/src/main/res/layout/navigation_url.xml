@@ -78,7 +78,7 @@
                         app:privateModeBackground="@{!settingsViewmodel.isTrackingProtectionEnabled ? @drawable/url_button_start_private : @drawable/url_button_private}"
                         android:paddingStart="@{settingsViewmodel.isTrackingProtectionEnabled ? @dimen/navigation_bar_icon_padding_small : @dimen/navigation_bar_icon_padding_big}"
                         android:paddingEnd="2dp"
-                        android:src="@drawable/ic_icon_clear"
+                        android:src="@{settingsViewmodel.isDrmEnabled ? @drawable/ic_icon_drm_allowed : @drawable/ic_icon_drm_blocked}"
                         android:tint="@color/fog"
                         android:tooltipText="@{settingsViewmodel.isTrackingProtectionEnabled ? @string/drm_enabled_tooltip : @string/drm_disabled_tooltip}"
                         app:privateMode="@{viewmodel.isPrivateSession}" />
