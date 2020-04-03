@@ -53,7 +53,7 @@
                     android:src="@{viewmodel.isTrackingEnabled ? @drawable/ic_icon_tracking_enabled : @drawable/ic_icon_tracking_disabled}"
                     app:privateMode="@{viewmodel.isPrivateSession}"
                     android:tint="@color/fog"
-                    app:visibleGone="@{!viewmodel.isPrivateSession &amp;&amp; settingsViewmodel.isTrackingProtectionEnabled &amp;&amp; !UrlUtils.isContentFeed(context, viewmodel.url.toString())}"
+                    app:visibleGone="@{!UrlUtils.isPrivateAboutPage(context, viewmodel.url.toString()) &amp;&amp; settingsViewmodel.isTrackingProtectionEnabled &amp;&amp; !UrlUtils.isContentFeed(context, viewmodel.url.toString())}"
                     android:tooltipText="@{viewmodel.isTrackingEnabled ? @string/tracking_allowed_tooltip : @string/tracking_disabled_tooltip}" />
 
                 <LinearLayout
@@ -115,7 +115,7 @@
                 <View
                     android:layout_width="4dp"
                     android:layout_height="match_parent"
-                    app:visibleGone="@{!UrlUtils.isHomeUri(context, viewmodel.url.toString())}"/>
+                    app:visibleGone="@{!UrlUtils.isContentFeed(context, viewmodel.url.toString()) &amp;&amp; !UrlUtils.isPrivateAboutPage(context, viewmodel.url.toString())}"/>
 
             </LinearLayout>
 
@@ -124,7 +124,7 @@
                 android:layout_width="15dp"
                 android:layout_height="match_parent"
                 android:layout_toEndOf="@id/startButtonsLayout"
-                app:visibleGone="@{((!settingsViewmodel.isTrackingProtectionEnabled || viewmodel.isPrivateSession) &amp;&amp; !viewmodel.isPopUpAvailable &amp;&amp; !viewmodel.isWebXRUsed) || viewmodel.isLibraryVisible || UrlUtils.isHomeUri(context, viewmodel.url.toString())}"/>
+                app:visibleGone="@{(!settingsViewmodel.isTrackingProtectionEnabled &amp;&amp; !viewmodel.isPopUpAvailable &amp;&amp; !viewmodel.isWebXRUsed) || viewmodel.isLibraryVisible || UrlUtils.isContentFeed(context, viewmodel.url.toString()) || UrlUtils.isPrivateAboutPage(context, viewmodel.url.toString())}"/>
 
             <LinearLayout
                 android:id="@+id/icons"
